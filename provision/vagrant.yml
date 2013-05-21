@@ -1,0 +1,6 @@
+---
+- hosts: vagrant
+  roles:
+   - dist_upgrade
+   - vagrant
+   - { role: install_wordpress, host: localhost, user: root, password: '' }

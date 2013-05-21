@@ -1,0 +1,5 @@
+---
+- name: Do apt Update
+  apt: update_cache=yes cache_valid_time=21600
+- name: Do Dist Upgrade
+  apt: upgrade=dist

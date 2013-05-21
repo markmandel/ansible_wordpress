@@ -1,0 +1,9 @@
+---
+- name: install wordpress
+  apt: pkg=wordpress state=latest
+- name: store mysql database list
+  shell:  echo 'show databases;' | sudo mysql --host={{ host }} --user={{ user }} --password={{ password }}
+  register: mysql_dbs
+- name: create wordpress database
+  command: sudo bash /usr/share/doc/wordpress/examples/setup-mysql -n wordpress {{ host }}
+  when: "mysql_dbs.find('wordpress') != -1"

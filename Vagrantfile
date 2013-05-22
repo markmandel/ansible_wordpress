@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
 
   config.vm.provider "vmware_workstation" do |v|
-	  #v.gui = true
+	  v.gui = true
   end
 
   config.vm.provision :ansible do |ansible|

@@ -1,9 +1,9 @@
 ---
 - name: install wordpress
   apt: pkg=wordpress state=latest
-- name: store mysql database list
-  shell:  echo 'show databases;' | sudo mysql --host={{ host }} --user={{ user }} --password={{ password }}
-  register: mysql_dbs
-- name: create wordpress database
-  command: sudo bash /usr/share/doc/wordpress/examples/setup-mysql -n wordpress {{ host }}
-  when: "mysql_dbs.find('wordpress') != -1"
+- name: install mysql db tools
+  apt: pkg=python-mysqldb
+- name: create wordpress database (u/p)
+  mysql_db: name={{ wordpress_db_name }} login_user={{ user }} login_password={{ password }} login_host={{ host }}
+- name: create wordpress db account (u/p)
+  mysql_user: name={{ wordpress_user }} password={{ wordpress_password }} host=% priv={{ wordpress_db_name }}.*:ALL login_user={{ user }} login_password={{ password }} login_host={{ host }}

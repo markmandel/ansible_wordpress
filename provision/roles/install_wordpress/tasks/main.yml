@@ -1,13 +1,47 @@
+#install process is from: http://ubuntuserverguide.com/2012/05/how-to-install-latest-wordpress-in-ubuntu-server-12-04-lts.html
 ---
+#packages
 - name: install wordpress
   apt: pkg=wordpress state=latest
 - name: install mysql db tools
   apt: pkg=python-mysqldb
+
+#host file changes
+- name: makes sure the machine knows it's own domain
+  lineinfile: backup=yes dest="/etc/hosts" line="127.0.0.1    {{ domain }}" state="present" regexp="127\.0\.0\.1    {{ domain }}"
+
+#database work
 - name: create wordpress database (u/p)
   mysql_db: name={{ wordpress_db_name }} login_user={{ user }} login_password={{ password }} login_host={{ host }}
 - name: create wordpress db account (u/p)
   mysql_user: name={{ wordpress_user }} password={{ wordpress_password }} host=% priv={{ wordpress_db_name }}.*:ALL login_user={{ user }} login_password={{ password }} login_host={{ host }}
-- name: create wordpress symlink
-  file: state=link path=/var/www/wordpress src=/usr/share/wordpress
+
+#create files and symlinks
 - name: set permissions on wordpress folder
   file: owner=www-data recurse=yes path=/usr/share/wordpress state=directory
+- name: create wordpress symlink to /var/www
+  file: state=link path=/var/www/wordpress src=/usr/share/wordpress
+- name: create wordpress symlink to /srv/www
+  file: state=link path=/srv/www/{{ domain }} src=/usr/share/wordpress
+
+#upload directory
+- name: create upload directory
+  file: state="directory" dest="/srv/www/wp-uploads/{{ domain }}" mode="0774" owner="root" group="www-data"
+
+#create config file
+- name: generate secret key
+  set_fact: wp_secret_key={{ lookup('password', '.passwords/wp_secret_key') }}
+- name: create wordpress configuration file
+  template: dest=/etc/wordpress/config-{{domain}}.php src=wp-config.j2
+- name: set the permissions on the config, so it's locked to sudo and www-data
+  file: path="/etc/wordpress/config-{{domain}}.php" group="www-data" owner="root" mode=0640
+
+#configure apache
+- name: copy up apache config for wordpress
+  copy: src=wordpress dest=/etc/apache2/sites-available/wordpress
+- name: turn off default apache
+  command: sudo a2dissite default
+- name: turn on wordpress site
+  command: sudo a2ensite wordpress
+- name: reload apache2
+  command: sudo service apache2 reload

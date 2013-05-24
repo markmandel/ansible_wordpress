@@ -1,0 +1,18 @@
+<?php
+define('DB_NAME', '{{ wordpress_db_name }}');
+define('DB_USER', '{{ user }}');
+define('DB_PASSWORD', '{{ password }}');
+define('DB_HOST', '{{ domain }}');
+define('SECRET_KEY', '{{ wp_secret_key }}');
+
+#This will disable the update notification.
+define('WP_CORE_UPDATE', false);
+
+$table_prefix  = 'wp_';
+$server = DB_HOST;
+$loginsql = DB_USER;
+$passsql = DB_PASSWORD;
+$base = DB_NAME;
+$upload_path = "/srv/www/wp-uploads/{{ domain }}";
+$upload_url_path = "http://{{ domain }}/wp-uploads";
+?>

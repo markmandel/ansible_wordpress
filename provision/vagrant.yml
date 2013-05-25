@@ -3,4 +3,4 @@
   roles:
    - dist_upgrade
    - vagrant
-   - { role: install_wordpress, host: localhost, domain: 'dev.compoundtheory', wordpress_db_name: 'wp_ct', wordpress_user: 'wordpress', wordpress_password: 'password', user: 'root', password: '' }
+   - { role: install_wordpress, domain: 'dev.compoundtheory', db_name: 'wp_ct' }

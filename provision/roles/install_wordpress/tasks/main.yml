@@ -11,10 +11,10 @@
   lineinfile: backup=yes dest="/etc/hosts" line="127.0.0.1    {{ domain }}" state="present" regexp="127\.0\.0\.1    {{ domain }}"
 
 #database work
-- name: create wordpress database (u/p)
-  mysql_db: name={{ wordpress_db_name }} login_user={{ user }} login_password={{ password }} login_host={{ host }}
-- name: create wordpress db account (u/p)
-  mysql_user: name={{ wordpress_user }} password={{ wordpress_password }} host=% priv={{ wordpress_db_name }}.*:ALL login_user={{ user }} login_password={{ password }} login_host={{ host }}
+- name: create wordpress database
+  mysql_db: name={{ db_name }} login_user={{ master_db_user }} login_password={{ master_db_password }} login_host={{ db_host }}
+- name: create wordpress db account
+  mysql_user: name={{ wordpress_db_user }} password={{ wordpress_db_password }} host={{ db_host }} priv={{ db_name }}.*:ALL login_user={{ master_db_user }} login_password={{ master_db_password }} login_host={{ db_host }}
 
 #create files and symlinks
 - name: set permissions on wordpress folder

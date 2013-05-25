@@ -1,0 +1,4 @@
+---
+- hosts: vagrant
+  roles:
+   - { role: dump_wordpress, db_name: 'wp_ct', domain: dev.compoundtheory }

@@ -1,0 +1,23 @@
+#takes a backup of a wordpress install, to get it ready for deployment.
+---
+#initial setup
+- name: make sure rsync is installed on the server.
+  apt: pkg=rsync
+
+#clear and recreate the backup directory
+- name: delete the old backup
+  local_action: file path=.backup state=absent
+- name: create new backup dir
+  local_action: file path=.backup state=directory
+
+#backup mysql
+- name: backup the wordpress mysql
+  mysql_db: name={{ db_name }} login_user={{ wordpress_db_user }} login_password={{ wordpress_db_password }} login_host={{ db_host }} state=dump target="/tmp/wp-backup.sql"
+- name: fetch the backup
+  local_action: command rsync -a {{domain}}:/tmp/wp-backup.sql .backup/wp-backup.sql
+- name: clean up the backup
+  file: path=/tmp/wp-backup.sql state=absent
+
+#do a backup of all the files.
+- name: get all the files
+  local_action: command rsync -a {{domain}}:/usr/share/wordpress/ .backup/wordpress/

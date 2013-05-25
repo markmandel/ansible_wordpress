@@ -21,8 +21,12 @@
   file: owner=www-data recurse=yes path=/usr/share/wordpress state=directory
 - name: create wordpress symlink to /var/www
   file: state=link path=/var/www/wordpress src=/usr/share/wordpress
+- name: create /srv/www folder
+  file: state="directory" dest="/srv/www" mode="0774" owner="root" group="www-data"
 - name: create wordpress symlink to /srv/www
   file: state=link path=/srv/www/{{ domain }} src=/usr/share/wordpress
+- name: give wp the ability to read and write to htaccess to wordpress
+  file: path="/etc/wordpress/htaccess" group="www-data" owner="root" mode=0660
 
 #upload directory
 - name: create upload directory
@@ -43,5 +47,8 @@
   command: sudo a2dissite default
 - name: turn on wordpress site
   command: sudo a2ensite wordpress
+- name: enable required mods
+  #we've got some extra ones here, but quite likley you'll want them for caching, etc.
+  command: sudo a2enmod rewrite dir mime setenvif alias expires headers
 - name: reload apache2
   command: sudo service apache2 reload

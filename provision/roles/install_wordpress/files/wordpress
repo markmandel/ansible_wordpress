@@ -8,7 +8,7 @@
         </Directory>
         <Directory /var/www/wordpress>
                 Options Indexes FollowSymLinks MultiViews
-                AllowOverride None
+                AllowOverride all
                 Order allow,deny
                 allow from all
         </Directory>

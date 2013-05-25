@@ -1,4 +1,7 @@
-Vagrant + Ansible + Wordpress
+Ansible + Wordpress
 ==============================
 
-Let's try setting up Wordpress on Ubuntu with Vagrant and Ansible.
+Installing, and managing [Wordpress](http://wordpress.com/) via [Ansible](ansible.cc) on [Ubuntu](http://www.ubuntu.com/server).
+
+Currently only set up to provision on a vagrant install, but I will flesh this out further to install to production, as well as doing migrations from
+local development onto other servers.

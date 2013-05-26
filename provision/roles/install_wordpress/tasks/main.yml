@@ -19,8 +19,21 @@
 #switch out the symlinks in wp-includes with the real files.
 #we do this so automatic updates actually work, otherwise
 #wp fails when trying to overwrite the symlinks with a real file.
-
-- fail: actually implement replacing the symlinks.
+- name: "wp-includes: Find the symlinks."
+  command: find /usr/share/wordpress/wp-includes -type l
+  register: wp_symlinks
+- debug: msg="symlinks - {{ wp_symlinks }}"
+- name: "wp-includes:  move off the wp-includes to a tmp dir"
+  command: rsync /usr/share/wordpress/wp-includes/ /tmp/wp-includes/ -a --copy-links
+  when: wp_symlinks.stdout
+- name: "wp-includes: delete all symlinks"
+  command: sudo find /usr/share/wordpress/wp-includes/ -type l -delete
+  when: wp_symlinks.stdout
+- name: "wp-includes: replace them with the real files"
+  command: sudo rsync -r /tmp/wp-includes/ /usr/share/wordpress/wp-includes/
+  when: wp_symlinks.stdout
+- name: "wp-includes: make sure the backup is cleared"
+  file: path="/tmp/wp-includes/" state="absent"
 
 #create files and symlinks
 - name: set permissions on wordpress folder

@@ -11,12 +11,19 @@
   local_action: file path=.backup state=directory
 
 #backup mysql
+- name: ensure 7z
+  apt: pkg=p7zip-full
+  sudo: yes
 - name: backup the wordpress mysql
   mysql_db: name={{ db_name }} login_user={{ wordpress_db_user }} login_password={{ wordpress_db_password }} login_host={{ db_host }} state=dump target="/tmp/wp-backup.sql"
-- name: fetch the backup
-  local_action: command rsync -a {{backup_user}}@{{domain}}:/tmp/wp-backup.sql .backup/wp-backup.sql
-- name: clean up the backup
+- name: compress the backup
+  command: 7z a /tmp/wp-backup.7z /tmp/wp-backup.sql
+- name: clean up the sql backup
   file: path=/tmp/wp-backup.sql state=absent
+- name: fetch the backup
+  local_action: command rsync -a {{backup_user}}@{{domain}}:/tmp/wp-backup.7z .backup/wp-backup.7z
+- name: clean the 7z backup
+  file: path=/tmp/wp-backup.7z state=absent
 
 #do a backup of all the files.
 - name: get the base files

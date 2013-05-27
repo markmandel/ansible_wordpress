@@ -1,0 +1,35 @@
+#restore the backup of mysql. Can also be used to deploy from dev/stage -> production
+---
+#initial setup
+- name: make sure rsync is installed on the server.
+  apt: pkg=rsync
+  sudo: true
+- name: make sure 7z is installed on the server.
+  apt: pkg=p7zip-full
+  sudo: true
+
+#push up all the files from the backup
+- name: clear out any old restore.
+  file: path="/tmp/wp-restore" state=absent
+- name: make the dir for us to put stuff in
+  file: path="/tmp/wp-restore" state=directory
+- name: push up all the code for restoration
+  local_action: command rsync -a .backup/ {{restore_user}}@{{domain}}:/tmp/wp-restore/
+
+#restore the mysql db
+- name: unpack the mysql backup
+  command: 7z x -o/tmp/wp-restore/ /tmp/wp-restore/wp-backup.7z
+- name: restore the mysql db
+  mysql_db: name={{ db_name }} login_user={{ wordpress_db_user }} login_password={{ wordpress_db_password }} login_host={{ db_host }} state=import target="/tmp/wp-restore/wp-backup.sql"
+
+#restore the htaccess file
+- name: restore the htaccess file
+  command: cp /tmp/wp-restore/etc/htaccess /etc/wordpress/htaccess
+  sudo: yes
+- include: ../../../includes/htaccess_perms.yml
+
+#restore the wordpress dirs
+- name: copy files back over the top
+  command: rsync -r --delete /tmp/wp-restore/wordpress/ /usr/share/wordpress/
+  sudo: yes
+- include: ../../../includes/set_wordpress_permissions.yml

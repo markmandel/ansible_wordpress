@@ -1,14 +1,20 @@
 #install process is from: http://ubuntuserverguide.com/2012/05/how-to-install-latest-wordpress-in-ubuntu-server-12-04-lts.html
 ---
 #packages
+- name: install rsync.
+  apt: pkg=rsync
+  sudo: yes
 - name: install wordpress
   apt: pkg=wordpress state=latest
+  sudo: yes
 - name: install mysql db tools
   apt: pkg=python-mysqldb
+  sudo: yes
 
 #host file changes
 - name: makes sure the machine knows it's own domain
   lineinfile: backup=yes dest="/etc/hosts" line="127.0.0.1    {{ domain }}" state="present" regexp="127\.0\.0\.1    {{ domain }}"
+  sudo: yes
 
 #database work
 - name: create wordpress database
@@ -22,52 +28,62 @@
 - name: "wp-includes: Find the symlinks."
   command: find /usr/share/wordpress/wp-includes -type l
   register: wp_symlinks
-- debug: msg="symlinks - {{ wp_symlinks }}"
 - name: "wp-includes:  move off the wp-includes to a tmp dir"
   command: rsync /usr/share/wordpress/wp-includes/ /tmp/wp-includes/ -a --copy-links
   when: wp_symlinks.stdout
 - name: "wp-includes: delete all symlinks"
-  command: sudo find /usr/share/wordpress/wp-includes/ -type l -delete
+  command: find /usr/share/wordpress/wp-includes/ -type l -delete
+  sudo: yes
   when: wp_symlinks.stdout
 - name: "wp-includes: replace them with the real files"
-  command: sudo rsync -r /tmp/wp-includes/ /usr/share/wordpress/wp-includes/
+  command: rsync -r /tmp/wp-includes/ /usr/share/wordpress/wp-includes/
+  sudo: yes
   when: wp_symlinks.stdout
 - name: "wp-includes: make sure the backup is cleared"
   file: path="/tmp/wp-includes/" state="absent"
 
 #create files and symlinks
-- name: set permissions on wordpress folder
-  file: owner=www-data recurse=yes path=/usr/share/wordpress state=directory
+- include: ../../../includes/set_wordpress_permissions.yml
 - name: create wordpress symlink to /var/www
   file: state=link path=/var/www/wordpress src=/usr/share/wordpress
+  sudo: yes
 - name: create /srv/www folder
   file: state="directory" dest="/srv/www" mode="0774" owner="root" group="www-data"
+  sudo: yes
 - name: create wordpress symlink to /srv/www
   file: state=link path=/srv/www/{{ domain }} src=/usr/share/wordpress
-- name: give wp the ability to read and write to htaccess to wordpress
-  file: path="/etc/wordpress/htaccess" group="www-data" owner="root" mode=0660
+  sudo: yes
+- include: ../../../includes/htaccess_perms.yml
 
 #upload directory
 - name: create upload directory
   file: state="directory" dest="/srv/www/wp-uploads/{{ domain }}" mode="0774" owner="root" group="www-data"
+  sudo: yes
 
 #create config file
 - name: generate secret key
   set_fact: wp_secret_key={{ lookup('password', '.passwords/wp_secret_key') }}
 - name: create wordpress configuration file
   template: dest=/etc/wordpress/config-{{domain}}.php src=wp-config.j2
+  sudo: yes
 - name: set the permissions on the config, so it's locked to sudo and www-data
   file: path="/etc/wordpress/config-{{domain}}.php" group="www-data" owner="root" mode=0640
+  sudo: yes
 
 #configure apache
 - name: copy up apache config for wordpress
   copy: src=wordpress dest=/etc/apache2/sites-available/wordpress
+  sudo: yes
 - name: turn off default apache
-  command: sudo a2dissite default
+  command: a2dissite default
+  sudo: yes
 - name: turn on wordpress site
-  command: sudo a2ensite wordpress
+  command: a2ensite wordpress
+  sudo: yes
 - name: enable required mods
   #we've got some extra ones here, but quite likley you'll want them for caching, etc.
-  command: sudo a2enmod rewrite dir mime setenvif alias expires headers
+  command: a2enmod rewrite dir mime setenvif alias expires headers
+  sudo: yes
 - name: reload apache2
-  command: sudo service apache2 reload
+  command: service apache2 reload
+  sudo: yes

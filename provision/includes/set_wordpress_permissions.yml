@@ -1,0 +1,3 @@
+- name: set permissions on wordpress folder
+  file: owner=www-data recurse=yes path=/usr/share/wordpress state=directory
+  sudo: yes

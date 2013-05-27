@@ -3,6 +3,7 @@
 #initial setup
 - name: make sure rsync is installed on the server.
   apt: pkg=rsync
+  sudo: true
 
 #clear and recreate the backup directory
 - name: delete the old backup

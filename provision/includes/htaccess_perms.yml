@@ -1,0 +1,3 @@
+- name: give wp the ability to read and write to htaccess to wordpress
+  file: path="/etc/wordpress/htaccess" group="www-data" owner="root" mode=0660
+  sudo: yes

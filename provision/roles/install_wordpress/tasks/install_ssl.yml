@@ -1,0 +1,10 @@
+---
+- name: ensure ssl dir, that root only has access to
+  file: path="/etc/apache2/ssl/" state=directory owner=root group=root mode=0640
+  sudo: true
+- name: copy ssl certs over to the server, and set appropriate permissions
+  copy: dest=/etc/apache2/ssl/{{ssl_crt_file}} src={{ssl_crt_file}} owner=root group=root mode=0640
+  sudo: true
+- name: copy ssl pems over to the server, and set appropriate permissions
+  copy: dest=/etc/apache2/ssl/{{ssl_pem_file}} src={{ssl_pem_file}} owner=root group=root mode=0640
+  sudo: true

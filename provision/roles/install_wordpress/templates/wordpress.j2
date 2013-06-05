@@ -1,0 +1,40 @@
+<VirtualHost *:80>
+        ServerAdmin {{ server_admin_email }}
+
+        DocumentRoot /var/www/wordpress
+        <Directory />
+			Options FollowSymLinks
+			AllowOverride None
+        </Directory>
+        <Directory /var/www/wordpress>
+			Options Indexes FollowSymLinks MultiViews
+			AllowOverride all
+			Order allow,deny
+			allow from all
+        </Directory>
+
+</VirtualHost>
+
+{%  if force_ssl_admin %}
+
+<VirtualHost *:443>
+
+	DocumentRoot /var/www/wordpress
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/wordpress>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride all
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	SSLEngine on
+	SSLCertificateFile    /etc/apache2/ssl/{{ ssl_crt_file }}
+	SSLCertificateKeyFile /etc/apache2/ssl/{{ ssl_pem_file }}
+
+</VirtualHost>
+
+{% endif %}

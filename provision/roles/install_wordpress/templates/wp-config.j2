@@ -8,6 +8,10 @@ define('SECRET_KEY', '{{ wp_secret_key }}');
 #This will disable the update notification.
 define('WP_CORE_UPDATE', true);
 
+{%  if force_ssl_admin %}
+	define('FORCE_SSL_ADMIN', true);
+{% endif %}
+
 $table_prefix  = 'wp_';
 $server = DB_HOST;
 $loginsql = DB_USER;

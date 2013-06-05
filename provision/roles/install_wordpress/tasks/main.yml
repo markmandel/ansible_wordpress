@@ -71,8 +71,11 @@
   sudo: yes
 
 #configure apache
+  #setup ssl if we've got it turned on
+- include: install_ssl.yml
+  when: force_ssl_admin
 - name: copy up apache config for wordpress
-  copy: src=wordpress dest=/etc/apache2/sites-available/wordpress
+  template: src=wordpress.j2 dest=/etc/apache2/sites-available/wordpress
   sudo: yes
 - name: turn off default apache
   command: a2dissite default
@@ -82,8 +85,8 @@
   sudo: yes
 - name: enable required mods
   #we've got some extra ones here, but quite likley you'll want them for caching, etc.
-  command: a2enmod rewrite dir mime setenvif alias expires headers
+  command: a2enmod rewrite dir mime setenvif alias expires headers ssl
   sudo: yes
 - name: reload apache2
-  command: service apache2 reload
+  service: name=apache2 state=reloaded
   sudo: yes

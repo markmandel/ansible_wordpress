@@ -3,4 +3,4 @@
   roles:
    - dist_upgrade
    - vagrant
-   - { role: install_wordpress, domain: 'dev.compoundtheory', db_name: 'wp_ct', server_admin_email: 'info@compoundtheory.com', force_ssl_admin: 'true' }
+   - { role: install_wordpress, domain: 'dev.compoundtheory', db_name: 'wp_ct', server_admin_email: 'info@compoundtheory.com', force_ssl_admin: true, force_http_auth_admin: true }

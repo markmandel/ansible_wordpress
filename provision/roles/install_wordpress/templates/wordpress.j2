@@ -13,6 +13,10 @@
 			allow from all
         </Directory>
 
+		{% if not force_ssl_admin and force_http_auth_admin %}
+			{% include "http_auth_partial.j2" %}
+		{% endif %}
+
 </VirtualHost>
 
 {%  if force_ssl_admin %}
@@ -34,6 +38,10 @@
 	SSLEngine on
 	SSLCertificateFile    /etc/apache2/ssl/{{ ssl_crt_file }}
 	SSLCertificateKeyFile /etc/apache2/ssl/{{ ssl_pem_file }}
+
+	{% if force_http_auth_admin %}
+		{% include "http_auth_partial.j2" %}
+	{% endif %}
 
 </VirtualHost>
 

@@ -1,0 +1,8 @@
+#/etc/apache/htpasswd/{{ htpasswd_file }}
+---
+- name: ensure password dir, that only root has access to
+  file: path="/etc/apache2/htpasswd/" state=directory owner=root group=www-data mode=0750
+  sudo: true
+- name: copy password file over to the server
+  copy: dest=/etc/apache2/htpasswd/{{htpasswd_file}} src={{htpasswd_file}} owner=root group=www-data mode=0750
+  sudo: true

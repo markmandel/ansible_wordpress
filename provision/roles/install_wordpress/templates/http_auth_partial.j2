@@ -1,0 +1,19 @@
+<Location /wp-admin>
+	AuthType Digest
+	AuthName "ctheory"
+	AuthDigestDomain /wp-admin/
+
+	AuthDigestProvider file
+	AuthUserFile /etc/apache2/htpasswd/{{ htpasswd_file }}
+	Require valid-user
+</Location>
+
+<Location /wp-admin/wp-login.php>
+AuthType Digest
+AuthName "ctheory"
+AuthDigestDomain /wp-admin/
+
+AuthDigestProvider file
+AuthUserFile /etc/apache2/htpasswd/{{ htpasswd_file }}
+Require valid-user
+</Location>

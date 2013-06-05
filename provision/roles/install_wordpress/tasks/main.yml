@@ -74,6 +74,8 @@
   #setup ssl if we've got it turned on
 - include: install_ssl.yml
   when: force_ssl_admin
+- include: install_http_auth.yml
+  when: force_http_auth_admin
 - name: copy up apache config for wordpress
   template: src=wordpress.j2 dest=/etc/apache2/sites-available/wordpress
   sudo: yes
@@ -85,7 +87,7 @@
   sudo: yes
 - name: enable required mods
   #we've got some extra ones here, but quite likley you'll want them for caching, etc.
-  command: a2enmod rewrite dir mime setenvif alias expires headers ssl
+  command: a2enmod rewrite dir mime setenvif alias expires headers ssl auth_digest
   sudo: yes
 - name: reload apache2
   service: name=apache2 state=reloaded

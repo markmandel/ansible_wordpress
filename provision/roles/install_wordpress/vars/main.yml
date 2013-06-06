@@ -9,3 +9,4 @@ ssl_crt_file: server.crt
 ssl_pem_file: server.pem
 force_http_auth_admin: false
 htpasswd_file: '.htpasswd'
+wp_debug: false

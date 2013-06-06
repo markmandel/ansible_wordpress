@@ -12,6 +12,10 @@ define('WP_CORE_UPDATE', true);
 	define('FORCE_SSL_ADMIN', true);
 {% endif %}
 
+{%  if wp_debug %}
+	define('WP_DEBUG', true);
+{% endif %}
+
 $table_prefix  = 'wp_';
 $server = DB_HOST;
 $loginsql = DB_USER;

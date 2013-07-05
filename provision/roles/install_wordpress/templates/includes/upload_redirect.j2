@@ -1,0 +1,3 @@
+# Store uploads in /srv/www/wp-uploads/{{ domain }}
+RewriteEngine On
+RewriteRule ^/wp-uploads/(.*)$ /srv/www/wp-uploads/%{HTTP_HOST}/$1

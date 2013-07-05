@@ -87,7 +87,7 @@
   sudo: yes
 - name: enable required mods
   #we've got some extra ones here, but quite likley you'll want them for caching, etc.
-  command: a2enmod rewrite dir mime setenvif alias expires headers ssl auth_digest
+  command: a2enmod rewrite dir mime setenvif alias expires headers ssl auth_digest vhost_alias
   sudo: yes
 - name: reload apache2
   service: name=apache2 state=reloaded

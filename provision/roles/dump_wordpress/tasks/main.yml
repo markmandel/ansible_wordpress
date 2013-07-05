@@ -31,3 +31,7 @@
   local_action: command rsync -a {{ backup_user }}@{{domain}}:/usr/share/wordpress/ .backup/wordpress/
 - name: get the htaccess file
   local_action: command rsync -a --rsync-path="sudo rsync" {{ backup_user }}@{{domain}}:/etc/wordpress/htaccess .backup/etc/
+
+#backup upload if on
+- include: ./includes/archive_uploads.yml
+  when: archive_uploads

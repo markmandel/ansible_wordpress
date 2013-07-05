@@ -1,0 +1,14 @@
+ServerAdmin {{ server_admin_email }}
+
+DocumentRoot /var/www/wordpress
+
+<Directory />
+	Options FollowSymLinks
+	AllowOverride None
+</Directory>
+<Directory /var/www/wordpress>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride all
+	Order allow,deny
+	allow from all
+</Directory>

@@ -1,20 +1,10 @@
 <VirtualHost *:80>
-        ServerAdmin {{ server_admin_email }}
+		{% include "includes/default_vhost.j2" %}
 
-        DocumentRoot /var/www/wordpress
-        <Directory />
-			Options FollowSymLinks
-			AllowOverride None
-        </Directory>
-        <Directory /var/www/wordpress>
-			Options Indexes FollowSymLinks MultiViews
-			AllowOverride all
-			Order allow,deny
-			allow from all
-        </Directory>
+		{% include "includes/upload_redirect.j2" %}
 
 		{% if not force_ssl_admin and force_http_auth_admin %}
-			{% include "http_auth_partial.j2" %}
+			{% include "includes/http_auth.j2" %}
 		{% endif %}
 
 </VirtualHost>
@@ -23,24 +13,16 @@
 
 <VirtualHost *:443>
 
-	DocumentRoot /var/www/wordpress
-	<Directory />
-		Options FollowSymLinks
-		AllowOverride None
-	</Directory>
-	<Directory /var/www/wordpress>
-		Options Indexes FollowSymLinks MultiViews
-		AllowOverride all
-		Order allow,deny
-		allow from all
-	</Directory>
+	{% include "includes/default_vhost.j2" %}
 
 	SSLEngine on
 	SSLCertificateFile    /etc/apache2/ssl/{{ ssl_crt_file }}
 	SSLCertificateKeyFile /etc/apache2/ssl/{{ ssl_pem_file }}
 
+	{% include "includes/upload_redirect.j2" %}
+
 	{% if force_http_auth_admin %}
-		{% include "http_auth_partial.j2" %}
+		{% include "includes/http_auth.j2" %}
 	{% endif %}
 
 </VirtualHost>

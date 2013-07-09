@@ -1,0 +1,5 @@
+---
+- name: unpack the mysql backup
+  command: 7z x -o/tmp/wp-restore/ /tmp/wp-restore/wp-backup.7z
+- name: restore the mysql db
+  mysql_db: name={{ db_name }} login_user={{ wordpress_db_user }} login_password={{ wordpress_db_password }} login_host={{ db_host }} state=import target="/tmp/wp-restore/wp-backup.sql"

@@ -24,7 +24,7 @@
 
 #restore the wordpress dirs
 - name: copy files back over the top
-  command: rsync -r --delete /tmp/wp-restore/wordpress/ /usr/share/wordpress/
+  command: rsync -r /tmp/wp-restore/wordpress/ /usr/share/wordpress/
   sudo: yes
 - include: ../../../includes/set_wordpress_permissions.yml
 

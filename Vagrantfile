@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :ansible do |ansible|
 	  ansible.playbook = "./provision/vagrant.yml"
-	  ansible.inventory_file = "./provision/inventory/vagrant.py"
+	  ansible.inventory_path = "./provision/inventory/vagrant.py"
 	  ansible.verbose = true
   end
 

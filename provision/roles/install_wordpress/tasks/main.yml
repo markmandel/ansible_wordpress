@@ -20,7 +20,7 @@
 - name: create wordpress database
   mysql_db: name={{ db_name }} login_user={{ master_db_user }} login_password={{ master_db_password }} login_host={{ db_host }}
 - name: create wordpress db account
-  mysql_user: name={{ wordpress_db_user }} password={{ wordpress_db_password }} host={{ db_host }} priv={{ db_name }}.*:ALL login_user={{ master_db_user }} login_password={{ master_db_password }} login_host={{ db_host }}
+  mysql_user: name={{ wordpress_db_user }} password={{ wordpress_db_password }} host=% priv="{{ db_name }}.*:CREATE,DROP,DELETE,INDEX,INSERT,SELECT,UPDATE,LOCK TABLES,ALTER" login_user={{ master_db_user }} login_password={{ master_db_password }} login_host={{ db_host }}
 
 #switch out the symlinks in wp-includes with the real files.
 #we do this so automatic updates actually work, otherwise
